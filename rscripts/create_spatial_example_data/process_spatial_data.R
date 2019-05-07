@@ -20,10 +20,20 @@ hru <- hru_valid %>%
 
 st_agr(hru) <- "constant"
 
-#TODO:
 #intersect HRUs with a state so can work with political
 #boundaries and get a sense of scale
 #probably need to get them in the same projection first
+library(raster)
+states_shapes <- raster::getData('GADM', country="usa", level=1)
+ohio <- subset(states_shapes, NAME_1 == "Ohio")
+sp::plot(ohio)
+class(ohio)
+ohio_sf <- st_as_sf(ohio)
+st_crs(ohio_sf)
+ohio_projected <- st_transform(ohio_sf, crs = st_crs(hru_loaded))
+hru_ohio_intersect <- st_intersection(ohio_projected, hru_loaded)
+plot(hru_ohio_intersect$geometry) #all hru inside ohio
+
 
 #this seem like best option that preserves topology
 # Might use: rmapshaper::ms_simplify()
@@ -33,3 +43,7 @@ pryr::object_size(hru_sample)
 pryr::object_size(hru_sample_simple)
 plot(hru_sample)
 plot(hru_sample_simple)
+
+#TODO: write out to topojson or however is used by 
+#water use viz
+library(geojsonio)
