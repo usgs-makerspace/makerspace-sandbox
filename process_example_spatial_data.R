@@ -29,4 +29,6 @@ write_sf(hru_reduced, 'cache/hru_reduced_valid.shp')
 #need a way to get this shape file to a format node can use 
 # to test if toposimplify does better.  Creates a massive 
 # geojson file with no simplification, would be pretty unwieldy
+#note would need to increase memory limits for node -- can set an 
+#environment variable
 system('mapshaper cache/hru_reduced_valid.shp -simplify 10% -o simp_10.topojson')
