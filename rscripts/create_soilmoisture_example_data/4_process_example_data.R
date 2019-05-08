@@ -10,7 +10,7 @@ library(data.table)
 soilm_percentiles_1wk <- readRDS("cache/soilm_percentiles_1wk.rds")
 soilm_percentiles_1day <- soilm_percentiles_1wk[Date == max(Date)]
 
-saveRDS(runoff_percentiles_1day, "cache/runoff_example_data.rds")
+saveRDS(soilm_percentiles_1day, "cache/soilm_example_data.rds")
 
 # Might need to make it wide format again if we want to save it as
 #   a NetCDF file. See below for example.
