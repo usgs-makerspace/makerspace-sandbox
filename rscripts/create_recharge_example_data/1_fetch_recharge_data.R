@@ -9,6 +9,7 @@ library(data.table)
 # Get recharge csv
 # Downloaded from the following link because using sbtools was taking wayyyyyyyyyy
 # too long. Took over an hour and a half and then I gave up.
+# https://www.sciencebase.gov/catalog/item/5a4ea3bee4b0d05ee8c6647b
 
 # IF science base download would work, I would use this code:
 # authenticate_sb()
