@@ -1,5 +1,7 @@
 # Reshape data using data.table
 
+library(data.table)
+
 # Read in the RDS
 # Transform them from wide (109K + columns) to long (3 columns)
 #    The resulting columns will be Date, HRU, and Runoff_va
