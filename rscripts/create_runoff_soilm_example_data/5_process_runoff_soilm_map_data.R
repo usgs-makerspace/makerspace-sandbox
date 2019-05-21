@@ -4,8 +4,20 @@ library(data.table)
 library(jsonlite)
 library(readr)
 
-soilm <- readRDS("cache/soilm_example_data.rds")
-runoff <- readRDS("cache/runoff_example_data.rds")
+# This is the single day runoff percentiles to use for water availability values
+# They are %iles based on the past 25 years of data
+# So, 0.20 = runoff that is greater than 20% of 25 years of runoff
+#   values, but less than 80% of runoff values. 50% equals the median runoff.
+# NA means the runoff was 0
+runoff_percentiles_1wk <- readRDS("cache/runoff_percentiles_1wk.rds")
+runoff <- runoff_percentiles_1wk[Date == max(Date)]
+
+# This is the single day soil moisture percentiles to use for water availability values
+# They are %iles based on the maximum soil moisture
+# So, 0.20 = soil moisture that is 20% of the max soil moisture for that HRU
+# 0 means their was no soil moisture
+soilm_percentiles_1wk <- readRDS("cache/soilm_percentiles_1wk.rds")
+soilm <- soilm_percentiles_1wk[Date == max(Date)]
 
 # Merge values with maxes in order to figure out color to use
 all_data <- merge(runoff, soilm, by = c("HRU", "Date"), all=TRUE)
