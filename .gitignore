@@ -13,6 +13,6 @@
 .httr-oauth
 
 # cache directories
-/cache/
+*/cache/
 .Rproj.user
-/img/
+*/img/
