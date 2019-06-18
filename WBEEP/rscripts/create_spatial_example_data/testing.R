@@ -1,7 +1,7 @@
 library(sf)
 library(lwgeom) ## Needed for st_make_valid on Windows
 
-gfdb <- "cache/GF_nat_reg.gdb"
+gfdb <- "WBEEP/cache/GF_nat_reg.gdb"
 
 # What layers exist: sf::st_layers(gfdb)
 
@@ -34,7 +34,7 @@ one_state_reduced <- dplyr::select(one_state_simple,
 library(geojsonio)
 geojsonio::topojson_write(one_state_reduced, geometry = "polygon",
                           object_name = "test_state_hrus",
-                          file = "test_state_hru_simple.topojson",
+                          file = "WBEEP/cache/test_state_hru_simple.topojson",
                           quantization = 1e6)
 one_state_valid <- st_make_valid(one_state_reduced$geometry)
 #there are layers that list point/line errors,
