@@ -6,8 +6,8 @@ library(tidyr)
 library(data.table)
 
 # Load necessary data files
-quantile_df <- readRDS("WBEEP/cache/nhru_5yr_totS_quantiles.rds")
-value_dt <- readRDS("WBEEP/cache/totS_1wk.rds")
+quantile_df <- readRDS("WBEEP/cache/nhru_totS_percentiles_yrs.rds")
+value_dt <- readRDS("WBEEP/cache/totS_days.rds")
 
 # Remove duplicate breaks/quantiles
 #   Needed for handling multiple quantiles with the same value for breaks
@@ -91,5 +91,5 @@ per_dt[, totS_per :=
 # Clean up to just be left with HRU, Date, Runoff_va, and Runoff_per
 per_dt[, c("stat_to_use", "stat_name", "stat_value", "stat_type0", "stat_type1", "stat_value0", "stat_value1") := NULL]
 
-saveRDS(per_dt, "WBEEP/cache/totS_percentiles_1wk.rds")
+saveRDS(per_dt, "WBEEP/cache/totS_percentiles_days.rds")
 
