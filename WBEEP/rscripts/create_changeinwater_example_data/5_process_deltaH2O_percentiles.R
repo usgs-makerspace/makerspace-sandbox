@@ -70,8 +70,13 @@ value_dt_stat[,c("stat_type_list", "stat_value_list") := NULL] # Clean up and de
 per_dt <- merge(value_dt_stat, quantile_dt_interp_info, by.x = c("HRU", "stat_to_use"), 
                 by.y = c("HRU", "stat_type"), all.x = TRUE)
 per_dt[, deltaH2O_per := 
-         ifelse(stat_to_use == 0, yes = 0, 
+         # is.na(stat_type0) means that the stat_type being used is the lowest one
+         ifelse(is.na(stat_type0), yes = as.numeric(stat_to_use), 
                 no = (((stat_type1 - stat_type0) / (stat_value1 - stat_value0)) * (deltaH2O - stat_value0)) + stat_type0)]
+
+# Both of these should be zero
+stopifnot(length(which(is.na(per_dt$totS_per))) == 0)
+stopifnot(length(which(per_dt$totS_per > 1)) == 0)
 
 # Clean up to just be left with HRU, Date, Runoff_va, and Runoff_per
 per_dt[, c("stat_to_use", "stat_name", "stat_value", "stat_type0", "stat_type1", "stat_value0", "stat_value1") := NULL]
