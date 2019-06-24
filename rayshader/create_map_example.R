@@ -13,6 +13,7 @@ library(rayshader)
 library(dataRetrieval)
 library(dplyr)
 source("rayshader/get_usgs_elevation_data.R")
+source("rayshader/get_overlay.R")
 
 start_str <- "2018-08-20 12:00:00"# August Flooding; June storm: "2018-06-16 01:00:00"
 end_str <- "2018-08-21 14:00:00"# August Flooding; June storm: "2018-06-16 07:00:00"
@@ -74,13 +75,8 @@ raymat <- ray_shade(elev_matrix, zscale = zscale, lambert = TRUE)
 watermap <- detect_water(elev_matrix, zscale = zscale)
 
 # Get overlay image
-overlay_file <- "rayshader/input/overlay.png"
+overlay_file <- get_overlay(400, 400)
 overlay_img <- png::readPNG(overlay_file)
-# flatten the img
-# overlay_img[,,4] <- NULL
-# transparent <-  == 0
-# overlay_img[transparent] <- NA
-
 
 n_frames <- nrow(river_data)
 img_frames <- paste0("rayshader/cache/img/augustflood_", seq_len(n_frames), ".png")
@@ -89,9 +85,9 @@ for (i in seq_len(n_frames)) {
   message(paste(" - image", i, "of", n_frames))
   elev_matrix %>%
     sphere_shade(texture = "imhof1") %>%
-    #add_shadow(ambmat, 0.5) %>%
-    #add_shadow(raymat, 0.5) %>%
-    add_overlay(overlay_img, alphalayer = 0.5) %>% 
+    add_shadow(ambmat, 0.5) %>%
+    add_shadow(raymat, 0.5) %>%
+    #add_overlay(overlay_img, alphalayer = 0.5) %>% 
     plot_3d(elev_matrix, solid = TRUE, shadow = TRUE, zscale = 1, 
             water = TRUE, watercolor = "#4e9bf8", #river_data$watertemp_cat[i], 
             wateralpha = 1, 
