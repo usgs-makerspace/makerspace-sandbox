@@ -11,6 +11,7 @@ library(rjson) # writeLines
 # values for the last 5 years for that HRU
 
 deltaH2O_percentiles_days <- readRDS("WBEEP/cache/deltaH2O_percentiles_days.rds")
+deltaH2O_percentiles_hru_days <- readRDS("WBEEP/cache/deltaH2O_percentiles_hru_days.rds")
 
 autumn <- as.Date("2016-11-01")
 winter <- as.Date("2016-02-01")
@@ -22,10 +23,7 @@ for(season in names(dates)) {
   
   date <- dates[season]
   deltaH2O_percentiles_1day <- deltaH2O_percentiles_days[Date ==  date]
-  
-  # 2260 of these have invalid percentiles that Lindsay is still
-  # investigating.
-  length(unique(deltaH2O_percentiles_1day$HRU[which(deltaH2O_percentiles_1day$deltaH2O_per > 1)]))
+  deltaH2O_percentiles_hru_1day <- deltaH2O_percentiles_days[Date ==  date]
   
   determine_category <- function(deltaH2O) {
     
@@ -40,16 +38,22 @@ for(season in names(dates)) {
   
   # Use the function to determine the color for each HRU value
   map_data <- deltaH2O_percentiles_1day[, map_cat := determine_category(deltaH2O_per)]
+  map_hru_data <- deltaH2O_percentiles_hru_1day[, map_cat := determine_category(deltaH2O_per)]
   
   # Turn df into list (HRUs are list element names, color is value)
   map_data_list <- setNames(as.list(as.character(map_data$map_cat)), map_data$HRU)
+  map_hru_data_list <- setNames(as.list(as.character(map_hru_data$map_cat)), map_hru_data$HRU)
   
   # Then list into json
   map_data_json <- jsonlite::toJSON(map_data_list)
+  map_hru_data_json <- jsonlite::toJSON(map_hru_data_list)
   
   # Write out JSON file and RDS in the end
   writeLines(map_data_json, sprintf("WBEEP/cache/deltaH2O_map_data_%s.json", season))
   saveRDS(map_data, sprintf("WBEEP/cache/deltaH2O_map_data_%s.rds", season))
+  
+  writeLines(map_hru_data_json, sprintf("WBEEP/cache/deltaH2O_map_hru_data_%s.json", season))
+  saveRDS(map_hru_data, sprintf("WBEEP/cache/deltaH2O_map_hru_data_%s.rds", season))
   
   # Push to S3 
   # Not yet working due to dssecrets credential error. Likely due to binary file 
