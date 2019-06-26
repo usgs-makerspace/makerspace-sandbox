@@ -29,10 +29,10 @@ get_overlay <- function(img_width, img_height, overlay_fp = "rayshader/input/ove
     )
   )
   
-  message("Copy and paste the following JSON query into")
-  message("https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task/execute")
+  message("Copy and paste the following JSON query into https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task/execute")
+  message("\n\n")
   message(jsonlite::toJSON(web_map_param))
-  
+  message("\n")
   message(sprintf("Then manually download the resulting image and store as '%s'", overlay_fp))
   return(overlay_fp)
 }
