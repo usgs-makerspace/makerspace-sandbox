@@ -7,6 +7,8 @@
 #### Need to set the appropriate datum for the gage height & relationship to zscale.
 #### This means the resulting water levels are innaccurate.
 
+## Look into this GIST, too: https://gist.github.com/dwbapst/bc4cfeb764c2df53e53670bf6e6eb67b
+
 library(elevatr)
 library(sp)
 library(rayshader)
@@ -14,6 +16,7 @@ library(dataRetrieval)
 library(dplyr)
 source("rayshader/get_usgs_elevation_data.R")
 source("rayshader/get_overlay.R")
+source("rayshader/prep_watermark_fun.R")
 
 start_str <- "2018-08-20 12:00:00"# August Flooding; June storm: "2018-06-16 01:00:00"
 end_str <- "2018-08-21 14:00:00"# August Flooding; June storm: "2018-06-16 07:00:00"
@@ -78,31 +81,57 @@ watermap <- detect_water(elev_matrix, zscale = zscale)
 overlay_file <- get_overlay(400, 400)
 overlay_img <- png::readPNG(overlay_file)
 
-n_frames <- nrow(river_data)
-img_frames <- paste0("rayshader/cache/img/augustflood_", seq_len(n_frames), ".png")
+# Make sure the image is the right size 
+# (will be built-in to package soon, see https://github.com/tylermorganwall/rayshader/issues/46#issuecomment-505696544)
+resized_overlay_file <- gsub(".png", "_resize.png", overlay_file)
+grDevices::png(filename = resized_overlay_file, 
+               width = dim(elev_matrix)[1], 
+               height = dim(elev_matrix)[2])
+par(mar = c(0,0,0,0))
+plot(as.raster(overlay_img))
+dev.off()
+resized_overlay_img <- png::readPNG(resized_overlay_file)
 
-for (i in seq_len(n_frames)) {
+# Get logo onto view
+logo_file <- "rayshader/input/usgs_sfacw_logo_black.png"
+x <- imager::load.image(logo_file)
+xx <- as.data.frame(x)
+xx$z <- 400
+
+n_frames <- nrow(river_data)
+img_frames <- paste0("rayshader/cache/augustflood_", seq_len(n_frames), ".png")
+
+for (i in 23:n_frames){#seq_len(n_frames)) {
   message(paste(" - image", i, "of", n_frames))
+  
   elev_matrix %>%
     sphere_shade(texture = "imhof1") %>%
     add_shadow(ambmat, 0.5) %>%
     add_shadow(raymat, 0.5) %>%
-    #add_overlay(overlay_img, alphalayer = 0.5) %>% 
+    add_overlay(resized_overlay_img, alphalayer = 0.9) %>%
     plot_3d(elev_matrix, solid = TRUE, shadow = TRUE, zscale = 1, 
             water = TRUE, watercolor = "#4e9bf8", #river_data$watertemp_cat[i], 
-            wateralpha = 1, 
+            wateralpha = 0.7, 
             waterlinealpha = 0.5,
             waterdepth = river_data$waterdepth[i], 
-            phi = 25, theta = 115, fov=50, zoom=0.2)
-  render_label(elev_matrix, x = site_x_img, y = site_y_img, z = 20, zscale=1, 
+            phi = 25, theta = 115, fov=50, zoom=0.5)
+  
+  # Add logo
+  rgl::plot3d(x = xx$z, y = rev(xx$y)*0.08+260, z = rev(xx$x)*0.08-400, col = xx$value, add=TRUE)
+  
+  # Add site name
+  render_label(elev_matrix, x = site_x_img, y = site_y_img, z = 110, zscale=1, 
                text = site_info$station_nm, freetype = F)
-  render_label(elev_matrix, x = 315, y = 300, z = 0, zscale=1, 
-               text = river_data$dateTime[i], freetype = F)
-  render_depth(focus=0.6,focallength = 10, filename = img_frames[i])
-  rgl::clear3d()
+  
+  # Timestamp
+  render_label(elev_matrix, x = 100, y = 300, z = 150, zscale=1, 
+               text = river_data$dateTime[i], freetype = F, alpha=0)
+  
+  # Save as image
+  render_snapshot(filename = img_frames[i], clear=TRUE)
 }
 
 # build gif
 magick::image_write_gif(magick::image_read(img_frames), 
-                        path = "rayshader/cache/pheasantbranchaugust2018.gif", 
+                        path = "rayshader/img/pheasantbranchaugust2018_upgraded.gif", 
                         delay = 10/n_frames)
