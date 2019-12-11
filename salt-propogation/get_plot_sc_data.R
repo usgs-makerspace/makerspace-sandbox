@@ -173,8 +173,30 @@ county_data <- counties %>%
 site_metadata_pop <- left_join(site_metadata, county_data) %>% 
   mutate(site_city_type = ifelse(population >= 100000, "urban", "rural"))
 
-##### Write out data #####
-
 sc_data <- left_join(storm_data_expected_pattern, site_metadata_pop)
+
+##### Convert to quantity of salt #####
+
+# Known drinking water facts:
+#   500 ppm ~ 1 tsp salt/gal (from: https://books.google.com/books?id=-GB5pscqAZ8C&pg=PA16&lpg=PA16&dq=what+is+specific+conductance+of+1+tablespoon+of+salt+in+water&source=bl&ots=Xtm7H9P4wI&sig=ACfU3U1d-wzT2sMmbRp7ITFM59X4L1_9Rw&hl=en&ppis=_e&sa=X&ved=2ahUKEwin-c6zr67mAhUyw1kKHYaaCqsQ6AEwEXoECAkQAQ#v=onepage&q=teaspoon&f=false)
+#   5 - 50 mS/m conductivity (from: )
+
+# Convert mS/m to uS/cm: 50-500 uS/cm
+# Take average of range: 275 uS/cm
+
+# So, convert units into teaspoons per gallon:
+# 1 tsp salt/gal ~ 275 uS/cm
+sc_data <- sc_data %>% 
+  mutate(SC_tsp = round(SC/275, digits = 2))
+
+sc_tsp_plot <- ggplot(sc_data, aes(x = storm_elapse_hrs, y = SC_tsp)) +
+  geom_point(aes(color = site_no, alpha=storm), shape=16, stroke = 0) +
+  #scale_y_log10() + 
+  ylab("Teaspoons of salt per gallon") +
+  facet_grid(rows = vars(site_no), scales = "free_y")
+
+ggplotly(sc_tsp_plot)
+
+##### Write out data #####
 
 write.csv(sc_data, "salt-propogation/example_sc_data.csv", row.names = FALSE)
