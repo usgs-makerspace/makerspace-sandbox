@@ -1,0 +1,87 @@
+
+# Run `make(remake_file = "wbeep_model_map_gif.yml")` to execute the whole thing.
+
+packages:
+  - aws.signature
+  - aws.s3
+  - geojsonio
+  - sf
+  - dplyr
+  - ggplot2
+  - maps
+  - mapdata
+
+sources:
+  - WBEEP/rscripts/generate_gif_images/interact_with_s3.R
+  - WBEEP/rscripts/generate_gif_images/create_model_output_maps.R
+  - WBEEP/rscripts/generate_gif_images/build_gif.R
+
+file_extensions:
+  - "ind"
+
+targets:
+  all: 
+    depends: 
+      - maps_created
+      - maps_pushed
+      - onhm_gif
+      - onhm_gif_pushed
+  
+  local_cache_loc:
+    command: c(I("WBEEP/rscripts/generate_gif_images/s3_data/"))
+  local_gif_name:
+    command: c(I("WBEEP/rscripts/generate_gif_images/onhm_model.gif"))
+  
+  s3_bucket:
+    command: c(I("prod-owi-resources"))
+  s3_model_output_loc:
+    command: c(I("resources/Application/wbeep/model_output_csv"))
+  s3_map_img_loc:
+    command: c(I("resources/Application/wbeep/gif_images"))
+  s3_auto_gif_name:
+    command: c(I("onhm_draft.gif"))
+  
+  # Dates to download
+  # wildfire dates (early nov?)
+  # contrast with flooding/heavy rain from tropical storm raymond Nov 19-20
+  dates_wildfires:
+    command: c(I("2019-10-30"), I("2019-11-05"))
+  dates_flooding:
+    command: c(I("2019-11-18"), I("2019-11-21")) 
+  date_ranges:
+    command: list(dates_wildfires, dates_flooding)
+
+  proj: 
+    command: c(I("+proj=lcc +lat_1=43.26666666666667 +lat_2=42.06666666666667 +lat_0=41.5 +lon_0=-93.5 +x_0=1500000 +y_0=1000000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"))
+  
+  ##########////
+  # NOT WORKING RIGHT NOW - weird projection issue.
+  ##########\\\\
+  
+  # Need to add Mexico and Canada on top of map to cover up HRUs that extend beyond US borders
+  canada_sf:
+    command: create_country_overlays(I("Canada"), proj)
+  mexico_sf:
+    command: create_country_overlays(I("Mexico"), proj)
+  
+  # This topojson file was shared by David
+  conus_sf:
+    command: load_conus_shape(I("WBEEP/cache/simp_10.topojson"), proj)
+    
+  # Fetch data from S3
+  data_downloaded:
+    command: fetch_s3_model_output(date_ranges, s3_bucket, s3_model_output_loc, local_cache_loc)
+  
+  # Create maps
+  maps_created:
+    command: create_maps(data_downloaded, conus_sf, canada_sf, mexico_sf)
+
+  # Push images back up
+  maps_pushed:
+    command: push_s3_model_maps(maps_created, s3_bucket, s3_map_img_loc)
+
+  # Create GIF & push to s3
+  onhm_gif:
+    command: generate_gif(local_gif_name, maps_created)
+  onhm_gif_pushed:
+    command: push_s3_gif(local_gif_name, s3_bucket, s3_map_img_loc, s3_auto_gif_name)
