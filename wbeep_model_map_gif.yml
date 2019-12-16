@@ -83,4 +83,4 @@ targets:
   onhm_gif:
     command: generate_gif(local_gif_name, maps_created)
   onhm_gif_pushed:
-    command: push_s3_gif(local_gif_name, s3_bucket, s3_map_img_loc, s3_auto_gif_name)
+    command: push_s3_gif(onhm_gif, s3_bucket, s3_map_img_loc, s3_auto_gif_name)
