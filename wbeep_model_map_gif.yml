@@ -64,8 +64,8 @@ targets:
     command: create_country_overlays(I("Mexico"), proj)
   
   # This topojson file was shared by David
-  conus_sf:
-    command: load_conus_shape(I("WBEEP/cache/simp_10.topojson"), proj)
+  hru_sf:
+    command: load_hru_shape(I("WBEEP/cache/simp_10.topojson"), proj)
     
   # Fetch data from S3
   data_downloaded:
@@ -73,7 +73,7 @@ targets:
   
   # Create maps
   maps_created:
-    command: create_maps(data_downloaded, conus_sf, canada_sf, mexico_sf)
+    command: create_maps(data_downloaded, hru_sf, conus_sf)
 
   # Push images back up
   maps_pushed:
