@@ -42,14 +42,13 @@ targets:
     command: c(I("onhm_draft.gif"))
   
   # Dates to download
-  # wildfire dates (early nov?)
-  # contrast with flooding/heavy rain from tropical storm raymond Nov 19-20
-  dates_wildfires:
-    command: c(I("2019-10-30"), I("2019-11-05"))
-  dates_flooding:
-    command: c(I("2019-11-18"), I("2019-11-21")) 
+  # 10/29 - 11/15 = 4 active CA wildfires dry out natural water storage (10/29 not downloading ...?)
+  #     # Center for Disaster Philanthropy: https://disasterphilanthropy.org/disaster/2019-california-wildfires/
+  # 11/19 - 11/22 = flooding/heavy rain from tropical storm raymond Nov 19-20 brings moisture
+  dates_to_use:
+    command: c(I("2019-10-30"), I("2019-11-22"))
   date_ranges:
-    command: list(dates_wildfires, dates_flooding)
+    command: list(dates_to_use)
 
   proj: 
     command: c(I("+proj=lcc +lat_1=43.26666666666667 +lat_2=42.06666666666667 +lat_0=41.5 +lon_0=-93.5 +x_0=1500000 +y_0=1000000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"))
