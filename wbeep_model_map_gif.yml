@@ -42,10 +42,14 @@ targets:
   # 10/29 - 11/15 = 4 active CA wildfires dry out natural water storage (10/29 not downloading ...?)
   #     # Center for Disaster Philanthropy: https://disasterphilanthropy.org/disaster/2019-california-wildfires/
   # 11/19 - 11/22 = flooding/heavy rain from tropical storm raymond Nov 19-20 brings moisture
-  dates_to_use:
-    command: c(I("2019-10-30"), I("2019-11-22"))
+  northern_wet_dates:
+    command: c(I("2019-11-06"), I("2019-11-06"))
+  wildfire_dates:
+    command: c(I("2019-11-12"), I("2019-11-12"))
+  raymond_dates:
+    command: c(I("2019-11-21"), I("2019-11-21"))
   date_ranges:
-    command: list(dates_to_use)
+    command: list(northern_wet_dates, wildfire_dates, raymond_dates)
 
   proj: 
     command: c(I("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +a=6370997 +b=6370997 +units=m +no_defs"))
