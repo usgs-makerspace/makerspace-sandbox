@@ -4,20 +4,17 @@
 packages:
   - aws.signature
   - aws.s3
-  - geojsonio
   - sf
   - dplyr
   - ggplot2
   - maps
-  - mapdata
+  - lwgeom
+  - rmapshaper
 
 sources:
   - WBEEP/rscripts/generate_gif_images/interact_with_s3.R
   - WBEEP/rscripts/generate_gif_images/create_model_output_maps.R
   - WBEEP/rscripts/generate_gif_images/build_gif.R
-
-file_extensions:
-  - "ind"
 
 targets:
   all: 
@@ -51,21 +48,30 @@ targets:
     command: list(dates_to_use)
 
   proj: 
-    command: c(I("+proj=lcc +lat_1=43.26666666666667 +lat_2=42.06666666666667 +lat_0=41.5 +lon_0=-93.5 +x_0=1500000 +y_0=1000000 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"))
+    command: c(I("+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +a=6370997 +b=6370997 +units=m +no_defs"))
   
-  ##########////
-  # NOT WORKING RIGHT NOW - weird projection issue.
-  ##########\\\\
+  # Need to crop to just US boundaries to remove HRUs that extend beyond US borders
+  conus_sf:
+    command: create_conus_sf(proj)
   
-  # Need to add Mexico and Canada on top of map to cover up HRUs that extend beyond US borders
-  canada_sf:
-    command: create_country_overlays(I("Canada"), proj)
-  mexico_sf:
-    command: create_country_overlays(I("Mexico"), proj)
+  # Takes a VERY LONG TIME. So I manually saved the result as an RDS file to skip this step (see next target).
+  # This loads & creates an sf object from the geodatabase that Blodgett shared
+  #hru_sf:
+  #  command: load_hru_shape(I("WBEEP/cache/GF_nat_reg.gdb"), proj)
   
-  # This topojson file was shared by David
+  # Created an intermediate RDS object that is the sf object already validated.
+  # Much faster to load
   hru_sf:
-    command: load_hru_shape(I("WBEEP/cache/simp_10.topojson"), proj)
+    command: readRDS("WBEEP/cache/valid_hru_sf.rds")
+   
+  # Was taking wayyyyy too long (> 30 min) so gave up and just build without simplifying
+  # Simplify the hru spatial data 
+  #hru_simple_sf:
+  #  command: simplify_hru_sf(hru_sf)
+  
+  # Crop hru spatial data to just CONUS
+  hru_conus_sf:
+    command: crop_hru_to_conus(hru_sf, conus_sf)
    
   # Fetch data from S3
   data_downloaded:
@@ -73,7 +79,7 @@ targets:
   
   # Create maps
   maps_created:
-    command: create_maps(data_downloaded, hru_sf, conus_sf)
+    command: create_maps(data_downloaded, hru_conus_sf)
 
   # Push images back up
   maps_pushed:
