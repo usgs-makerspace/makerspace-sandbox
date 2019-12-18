@@ -24,14 +24,14 @@ targets:
     depends: 
       - maps_created
       - maps_pushed
-      - onhm_gif
+      - WBEEP/rscripts/generate_gif_images/onhm_model.gif
       - onhm_gif_pushed
   
+  # Local file path info
   local_cache_loc:
     command: c(I("WBEEP/rscripts/generate_gif_images/s3_data/"))
-  local_gif_name:
-    command: c(I("WBEEP/rscripts/generate_gif_images/onhm_model.gif"))
   
+  # S3 bucket & folder locations
   s3_bucket:
     command: c(I("prod-owi-resources"))
   s3_model_output_loc:
@@ -66,7 +66,7 @@ targets:
   # This topojson file was shared by David
   hru_sf:
     command: load_hru_shape(I("WBEEP/cache/simp_10.topojson"), proj)
-    
+   
   # Fetch data from S3
   data_downloaded:
     command: fetch_s3_model_output(date_ranges, s3_bucket, s3_model_output_loc, local_cache_loc)
@@ -80,7 +80,7 @@ targets:
     command: push_s3_model_maps(maps_created, s3_bucket, s3_map_img_loc)
 
   # Create GIF & push to s3
-  onhm_gif:
-    command: generate_gif(local_gif_name, maps_created)
+  WBEEP/rscripts/generate_gif_images/onhm_model.gif:
+    command: generate_gif("WBEEP/rscripts/generate_gif_images/onhm_model.gif", maps_created)
   onhm_gif_pushed:
-    command: push_s3_gif(onhm_gif, s3_bucket, s3_map_img_loc, s3_auto_gif_name)
+    command: push_s3_gif("WBEEP/rscripts/generate_gif_images/onhm_model.gif", s3_bucket, s3_map_img_loc, s3_auto_gif_name)
