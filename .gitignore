@@ -16,3 +16,8 @@
 */cache/
 .Rproj.user
 */img/
+
+# Ignore data files created in WBEEP that can be rebuilt using makefile
+WBEEP/rscripts/generate_gif_images/img/*
+WBEEP/rscripts/generate_gif_images/s3_data/*
+WBEEP/rscripts/generate_gif_images/*.gif
