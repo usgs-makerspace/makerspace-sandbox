@@ -32,6 +32,7 @@ for (i in 1:length(string_timestamps_desired)) {
   print(paste0(prefix,string_timestamps_desired[i],suffix))
   path <- paste0(prefix,string_timestamps_desired[i],suffix)
   filename <- paste0("michael",i)
-  file <- download.file(path,filename,mode='wb')
+  file <- download.file(path,filename,method="wget")
+  writePNG(file, filename)
 }
 
