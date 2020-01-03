@@ -29,10 +29,9 @@ string_timestamps_desired <- as.character(timestamps_desired)
 string_timestamps_desired <- gsub(":","%3A",string_timestamps_desired)
 string_timestamps_desired <- gsub(" ","T",string_timestamps_desired)
 for (i in 1:length(string_timestamps_desired)) {
-  print(paste0(prefix,string_timestamps_desired[i],suffix))
   path <- paste0(prefix,string_timestamps_desired[i],suffix)
   filename <- paste0("michael",i)
-  file <- download.file(path,filename,method="wget")
+  file <- download.file(path,filename,method="auto")
   writePNG(file, filename)
 }
 
