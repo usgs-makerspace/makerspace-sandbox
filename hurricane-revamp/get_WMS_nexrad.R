@@ -31,7 +31,6 @@ string_timestamps_desired <- gsub(" ","T",string_timestamps_desired)
 for (i in 1:length(string_timestamps_desired)) {
   path <- paste0(prefix,string_timestamps_desired[i],suffix)
   filename <- paste0("michael",i)
-  file <- download.file(path,filename,method="auto")
-  writePNG(file, filename)
+  download.file(path, destfile=paste0(filename,".png"),method="auto")
 }
 
