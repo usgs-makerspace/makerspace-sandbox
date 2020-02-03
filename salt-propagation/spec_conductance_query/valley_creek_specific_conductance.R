@@ -33,7 +33,88 @@ plot(dfWide$dateTime, dfWide$value,
      ylab="spec conductance",xlab="dateTime" )
 
 
+# get data for Winter Storms between Jan and Feb 
+# Valley Creek at PA Turnpike Br near Valley Forge - 01473169
+parameterCd <- "00095"
+startDate <- "2019-01-01"
+endDate <- "2019-02-01"
+dfWide <- readNWISuv("01473169", "00095",
+                     startDate, endDate)
+dfWide <- dfWide[1:4]
+colnames(dfWide) <- c("agency","station","dateTime","value")
+
+par(mar=c(5,5,5,5)) #sets the size of the plot window
+plot(dfWide$dateTime, dfWide$value,
+     ylab="spec conductance",xlab="dateTime" )
 
 
+# get data for Winter Storms between Feb and March
+# Valley Creek at PA Turnpike Br near Valley Forge - 01473169
+parameterCd <- "00095"
+startDate <- "2019-02-01"
+endDate <- "2019-03-01"
+dfWide <- readNWISuv("01473169", "00095",
+                     startDate, endDate)
+dfWide <- dfWide[1:4]
+colnames(dfWide) <- c("agency","station","dateTime","value")
+
+par(mar=c(5,5,5,5)) #sets the size of the plot window
+plot(dfWide$dateTime, dfWide$value,
+     ylab="spec conductance",xlab="dateTime" )
+
+# get data for Winter Storms between Mar and Apr
+# Valley Creek at PA Turnpike Br near Valley Forge - 01473169
+parameterCd <- "00095"
+startDate <- "2019-03-01"
+endDate <- "2019-04-01"
+dfWide <- readNWISuv("01473169", "00095",
+                     startDate, endDate)
+dfWide <- dfWide[1:4]
+colnames(dfWide) <- c("agency","station","dateTime","value")
+
+par(mar=c(5,5,5,5)) #sets the size of the plot window
+plot(dfWide$dateTime, dfWide$value,
+     ylab="spec conductance",xlab="dateTime" )
+
+# get data for Winter Storms between Apr and May
+# Valley Creek at PA Turnpike Br near Valley Forge - 01473169
+parameterCd <- "00095"
+startDate <- "2019-04-01"
+endDate <- "2019-05-01"
+dfWide <- readNWISuv("01473169", "00095",
+                     startDate, endDate)
+dfWide <- dfWide[1:4]
+colnames(dfWide) <- c("agency","station","dateTime","value")
+
+par(mar=c(5,5,5,5)) #sets the size of the plot window
+plot(dfWide$dateTime, dfWide$value,
+     ylab="spec conductance",xlab="dateTime" )
+
+# get data for Winter Storms between May and June
+# Valley Creek at PA Turnpike Br near Valley Forge - 01473169
+parameterCd <- "00095"
+startDate <- "2019-05-01"
+endDate <- "2019-06-01"
+dfWide <- readNWISuv("01473169", "00095",
+                     startDate, endDate)
+dfWide <- dfWide[1:4]
+colnames(dfWide) <- c("agency","station","dateTime","value")
+
+par(mar=c(5,5,5,5)) #sets the size of the plot window
+plot(dfWide$dateTime, dfWide$value,
+     ylab="spec conductance",xlab="dateTime" )
 
 
+# get data for Winter Storms between June and July
+# Valley Creek at PA Turnpike Br near Valley Forge - 01473169
+parameterCd <- "00095"
+startDate <- "2019-06-01"
+endDate <- "2019-07-01"
+dfWide <- readNWISuv("01473169", "00095",
+                     startDate, endDate)
+dfWide <- dfWide[1:4]
+colnames(dfWide) <- c("agency","station","dateTime","value")
+
+par(mar=c(5,5,5,5)) #sets the size of the plot window
+plot(dfWide$dateTime, dfWide$value,
+     ylab="spec conductance",xlab="dateTime" )
